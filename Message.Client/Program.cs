@@ -2,19 +2,21 @@
 using System.Net.Sockets;
 using System.Text;
 
-Console.WriteLine("Inicio Cliente");
+Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")}: Start Client");
 
-Socket sender = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-IPEndPoint remoteEP = new IPEndPoint(ipAddress, 1234);
+var ipAddress = IPAddress.Parse("127.0.0.1");
+var endPoint = new IPEndPoint(ipAddress, 1234);
 
-sender.Connect(remoteEP);
+socket.Connect(endPoint);
 
-Console.WriteLine("Conexión establecida!");
+Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")}: Conexión establecida!");
 
-byte[] msg = Encoding.ASCII.GetBytes("Hola, servidor!");
-sender.Send(msg);
+var msg = Encoding.ASCII.GetBytes("Hola, servidor! Este es un mensaje desde el cliente");
+socket.Send(msg);
 
-sender.Shutdown(SocketShutdown.Both);
-sender.Close();
+// Close Client
+Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")}: Close Client");
+socket.Shutdown(SocketShutdown.Both);
+socket.Close();

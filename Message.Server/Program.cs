@@ -2,27 +2,24 @@
 using System.Net.Sockets;
 using System.Text;
 
-Socket listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")}: Start Server");
 
-IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, 1234);
-listener.Bind(localEndPoint);
+var socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+var localEndPoint = new IPEndPoint(IPAddress.Any, 1234);
+socketListener.Bind(localEndPoint);
 
-listener.Listen(10);
+socketListener.Listen(10);
+Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")}: Esperando conexiones...");
 
-Console.WriteLine("Esperando conexiones...");
+var clientSocket = socketListener.Accept();
+Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")}: Conexión establecida!");
 
-Socket clientSocket = listener.Accept();
+var bytes = new byte[1024];
+var bytesRec = clientSocket.Receive(bytes);
+var message = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")}: Mensaje recibido: {message}");
 
-Console.WriteLine("Conexión establecida!");
-
-byte[] bytes = new byte[1024];
-
-int bytesRec = clientSocket.Receive(bytes);
-
-string message = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-Console.WriteLine("Mensaje recibido: {0}", message);
-
+Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")}: Close Server");
 clientSocket.Shutdown(SocketShutdown.Both);
 clientSocket.Close();
-listener.Close();
+socketListener.Close();
